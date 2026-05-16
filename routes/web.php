@@ -75,3 +75,6 @@ Route::get('/settings-test', function () {
         ]
     ];
 });
+
+Route::get('/phone-validation', [StudentController::class, 'phoneForm']);
+Route::post('/phone-validation', [StudentController::class, 'validatePhone']);

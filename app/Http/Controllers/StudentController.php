@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Rules\ValidPhoneNumber;
 use Illuminate\Http\Request;
 use App\Models\Student;
 use App\Models\City;
@@ -29,7 +30,7 @@ class StudentController extends Controller
             'name' => 'required|string|max:255',
             'surname' => 'required|string|max:255',
             'address' => 'required|string',
-            'phone' => 'required|string|max:20',
+            'phone' => ['required', new ValidPhoneNumber()],
             'city_id' => 'required|exists:cities,id',
         ]);
 
@@ -51,7 +52,7 @@ class StudentController extends Controller
         'name' => 'required|string|max:255',
         'surname' => 'required|string|max:255',
         'address' => 'required|string',
-        'phone' => 'required|string|max:20',
+        'phone' => ['required', new ValidPhoneNumber()],
         'city_id' => 'required|exists:cities,id',
     ]);
 
@@ -85,6 +86,20 @@ class StudentController extends Controller
     {
         Student::withTrashed()->findOrFail($id)->forceDelete();
         return redirect()->route('students.trashed')->with('success', 'Studentas visam laikui pašalintas.');
+    }
+
+    public function phoneForm()
+    {
+        return view('phone-validation');
+    }
+
+    public function validatePhone(Request $request)
+    {
+        $request->validate([
+            'phone' => ['required', new \App\Rules\ValidPhoneNumber()],
+        ]);
+
+        return back()->with('success', 'Telefono numeris galioja!');
     }
 }
 
